@@ -1,11 +1,10 @@
-import { useState } from "react";
-function App() {
+import White_board from "./components/White_board";
+const App = () => {
   return (
-    <div className="bg-[#0F172A] ">
-      <h1>HELLO AGGARWAL JI</h1>
-      <h1>New change</h1>
+    <div>
+      <White_board />
     </div>
   );
-}
+};
 
 export default App;
