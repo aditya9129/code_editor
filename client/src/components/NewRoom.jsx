@@ -16,7 +16,7 @@ export default function NewRoom(){
         <div className="flex justify-center bg-[#0F172A]">
             <div className="">
             <form className="w-1/2 " onSubmit={submit}>
-                <input placeholder="enter room id" className="rounded-md w-full" value={roomid} onChange={e=>setroomid(e.target.value)}  id="roomInput"></input>
+                <input placeholder="enter id" className="rounded-md w-full" value={roomid} onChange={e=>setroomid(e.target.value)}  id="roomInput"></input>
                 <input placeholder="enter username" className="rounded-md w-full" value={username} onChange={e=>setusername(e.target.value)}></input>
                 <button className="">JOIN</button>
             </form>
