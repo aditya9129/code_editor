@@ -1,15 +1,13 @@
 import NewRoom from "./components/NewRoom";
-import White_board from "./components/White_board";
-import { Routes ,Route} from 'react-router-dom'
+import WhiteBoard from "./components/WhiteBoard";
+import { Routes, Route } from "react-router-dom";
 function App() {
   return (
     <Routes>
-    <Route path="/" element={<NewRoom/>}>
-    <Route path='/whiteboard' element={<White_board/>}/>
-    
-    </Route>
- </Routes>
+      <Route path="/" element={<NewRoom />}></Route>
+      <Route path="/whiteboard" element={<WhiteBoard />} />
+    </Routes>
   );
-};
+}
 
 export default App;
