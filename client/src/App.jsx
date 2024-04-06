@@ -1,11 +1,14 @@
 import { useState } from "react";
+import NewRoom from "./components/NewRoom";
 function App() {
   return (
-    <div className="bg-[#0F172A] ">
-      <h1>HELLO AGGARWAL JI</h1>
-      <h1>New change</h1>
-      <h2>khatana</h2>
-    </div>
+    <Routes>
+    <Route path="/" element={<Layout/>}>
+    <Route index element={<Index/>}/>
+    <Route path='/login' element={<Loginpage/>}/>
+    
+    </Route>
+ </Routes>
   );
 }
 
