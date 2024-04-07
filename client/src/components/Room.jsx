@@ -1,8 +1,16 @@
 import { Link } from "react-router-dom"
+import CodeEditor from "./CodeEditor"
+import Chat from "./Chat"
 export default function Room(){
     return (
-        <div className=" bg-[#1C1E2A] h-[100px]">
-          <Link to={'/whiteboard'} className="bg-[#06CF9C] rounded-md m-2 p-2">Whiteboard</Link>
+        <div className="w-full flex h-screen">
+        
+        <div className="w-1/3">
+            <Chat/>
+        </div>
+        <div className="bg-[#1C1E2A] w-2/3">
+            <CodeEditor/>
+        </div>
         </div>
     )
 } 
