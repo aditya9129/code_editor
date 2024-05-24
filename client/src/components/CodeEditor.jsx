@@ -28,7 +28,7 @@ const Editor = () => {
 
  
 
-    return <div className='h-screen'><textarea id="realtimeEditor"></textarea></div>;
+    return <div className='h-'><textarea id="realtimeEditor"></textarea></div>;
 };
 
 export default Editor;
