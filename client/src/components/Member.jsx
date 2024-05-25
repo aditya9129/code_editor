@@ -1,9 +1,10 @@
-// import Avatar from "react-avatar";
+//import Avatar from "react-avatar";
 
-export default function Member({ username }) {
+export default function Member( {username}) {
+
     return (
-        <div className="flex">
-         {/* <Avatar name={username} size="20" className="rounded"  />  */}
+        <div className="flex items-center">
+            {/* <Avatar name={username} size="30" round={true} className="mr-2" /> */}
             <p className="text-gray-400">{username}</p>
         </div>
     );

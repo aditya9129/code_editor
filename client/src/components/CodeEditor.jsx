@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import  { useEffect, useRef } from 'react';
 import Codemirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/edit/closetag';
-// import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/edit/closebrackets';
 
 
 const Editor = () => {
     const editorRef = useRef(null);
     useEffect(() => {
-        console.log()
-        async function init() {
+        
+        async function iniit() {
             editorRef.current = Codemirror.fromTextArea(
                 document.getElementById('realtimeEditor'),
                 {
@@ -23,12 +23,12 @@ const Editor = () => {
                 }
             )
         }
-        init();
+        iniit();
     }, []);
 
  
 
-    return <div className='h-'><textarea id="realtimeEditor"></textarea></div>;
+    return <div className='h-screen'><textarea id="realtimeEditor"></textarea></div>;
 };
 
 export default Editor;
