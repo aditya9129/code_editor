@@ -19,8 +19,12 @@ function getAllConnectedClients(roomid) {
 
 io.on('connection', (socket) => {
     console.log('socket connected', socket.id);
-
-    socket.on('join', ({ roomid, username }) => {
+    let id=socket.id;
+    socket.on('join', ({ roomid, username,id }) => {
+        if (!username) {
+            socket.emit('redirect', '/');
+            return;
+        }
         userSocketMap[socket.id] = username;
         socket.join(roomid);
         const clients = getAllConnectedClients(roomid);
@@ -28,23 +32,24 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit('chat_history', roomChatHistory[roomid]);
         }
         clients.forEach(({ socketid }) => {
+            
             io.to(socketid).emit('joined', {
                 clients,
                 username,
                 socketid: socket.id,
             });
-        });
+      });
     });
 
-    socket.on('message', ({ username, message, roomid }) => {
-        const chatMessage = { username, message };
+    socket.on('message', ({ username, message, roomid,time ,socketid}) => {
+        const chatMessage = { username, message ,time,socketid};
 
         // Store the message in chat history
         if (!roomChatHistory[roomid]) {
             roomChatHistory[roomid] = [];
         }
         roomChatHistory[roomid].push(chatMessage);
-        io.to(roomid).emit('message', { username, message });
+        io.to(roomid).emit('message', { username, message ,time,socketid});
     });
 
     socket.on('disconnecting', () => {

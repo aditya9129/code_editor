@@ -9,6 +9,7 @@ export default function Chat({socketRef}) {
     const [clients, setClients] = useState([]);
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
+    const [user, setuser] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const { roomid } = useParams();
@@ -29,19 +30,26 @@ export default function Chat({socketRef}) {
             socketRef.current.emit('join', {
                 roomid,
                 username: location.state?.username,
+            
+            
             });
 
-            socketRef.current.on('joined', ({ clients, username, socketId }) => {
+            socketRef.current.on('joined', ({ clients, username, socketid }) => {
+
                 if (username !== location.state?.username) {
                     toast.success(`${username} joined the room.`);
-                    console.log(`${username} joined`);
-                }
+            }
                 setClients(clients);
-                console.log(clients);
+                setuser(location.state?.username);
+            
             });
 
             socketRef.current.on('disconnected', ({ socketId, username }) => {
-                toast.success(`${username} left the room.`);
+                if (username !== location.state?.username) {
+                    toast.success(`${username} left the room.`);
+                    console.log(`${username} joined`);
+            }
+               
                 setClients((prev) => prev.filter((client) => client.socketid !== socketId));
             });
 
@@ -64,16 +72,27 @@ export default function Chat({socketRef}) {
             }
         };
     }, []);
-
+    function getCurrentTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+    
+        return `${hours}:${minutes}`;
+    }
     const handleMessageSend = () => {
+        let time=getCurrentTime();
         if (message.trim()) {
             socketRef.current.emit('message', {
                 username: location.state?.username,
                 message,
                 roomid,
+                time,
+                
+
             });
             
-            console.log(messages);
+            
             setMessage('');
         }
     };
@@ -84,10 +103,10 @@ export default function Chat({socketRef}) {
 
     return (
         
-        <div className="bg-[#202C33] w-full h-screen flex flex-col">
+        <div className="bg-[#1C1E2A] w-full h-screen flex flex-col">
             
-            <Chatbox clients={clients} messages={messages}/>
-            <div className="flex p-2">
+            <Chatbox clients={clients} messages={messages} user={user}/>
+            <div className="flex p-2 mx-auto" >
                 <input
                     type="text"
                     value={message}
