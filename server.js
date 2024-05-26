@@ -7,7 +7,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const userSocketMap = {};
-
+const roomChatHistory = {};
 function getAllConnectedClients(roomid) {
     return Array.from(io.sockets.adapter.rooms.get(roomid) || []).map((socketid) => {
         return {
@@ -24,6 +24,9 @@ io.on('connection', (socket) => {
         userSocketMap[socket.id] = username;
         socket.join(roomid);
         const clients = getAllConnectedClients(roomid);
+        if (roomChatHistory[roomid]) {
+            io.to(socket.id).emit('chat_history', roomChatHistory[roomid]);
+        }
         clients.forEach(({ socketid }) => {
             io.to(socketid).emit('joined', {
                 clients,
@@ -34,6 +37,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on('message', ({ username, message, roomid }) => {
+        const chatMessage = { username, message };
+
+        // Store the message in chat history
+        if (!roomChatHistory[roomid]) {
+            roomChatHistory[roomid] = [];
+        }
+        roomChatHistory[roomid].push(chatMessage);
         io.to(roomid).emit('message', { username, message });
     });
 

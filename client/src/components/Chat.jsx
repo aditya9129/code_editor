@@ -1,21 +1,21 @@
-import { useState, useRef, useEffect } from "react";
-import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { useState,  useEffect } from "react";
+import {  useLocation, useParams, useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
-import Member from "./Member";
+import Chatbox from "./Chatbox.jsx";
 import { initSocket } from "../../socket.js";
 import { Toaster } from "react-hot-toast";
 
-export default function Chat() {
+export default function Chat({socketRef}) {
     const [clients, setClients] = useState([]);
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
-    const socketRef = useRef(null);
     const location = useLocation();
     const { roomid } = useParams();
 
     useEffect(() => {
         const init = async () => {
+            
             socketRef.current = await initSocket();
             socketRef.current.on('connect_error', (err) => handleErrors(err));
             socketRef.current.on('connect_failed', (err) => handleErrors(err));
@@ -48,13 +48,18 @@ export default function Chat() {
             socketRef.current.on('message', (message) => {
                 setMessages((prev) => [...prev, message]);
             });
+            socketRef.current.on('chat_history', (chatHistory) => {
+                setMessages(chatHistory);
+            });
         };
 
         init();
-
+         //when we return from useEffect it is cleaning function
         return () => {
             if (socketRef.current) {
                 socketRef.current.disconnect();
+                socketRef.current.off('joined');
+                socketRef.current.off('disconnected')
                 socketRef.current = null;
             }
         };
@@ -68,7 +73,6 @@ export default function Chat() {
                 roomid,
             });
             
-            // setMessages((prev) => [...prev, { username: location.state?.username, message }]);
             console.log(messages);
             setMessage('');
         }
@@ -81,24 +85,8 @@ export default function Chat() {
     return (
         
         <div className="bg-[#202C33] w-full h-screen flex flex-col">
-         <div className="flex"> <h1 className="text-white mx-auto">Code Room</h1></div>  
-            <p className="text-white p-2 m-1 mx-auto">Connected Users</p>
-            <div className=" bg-gray-800 p-2">
-                {clients.map((info) => (
-                    <Member key={info.socketid} username={info.username} />
-                ))}
-                 </div>
-                <div className="h-full flex flex-col justify-end">
-                    <div className="overflow-y-auto max-h-[80vh]">
-                        {messages.map((msg, idx) => (
-                            <div key={idx} className="text-white mb-1">
-                                <strong>{msg.username}: </strong>
-                                {msg.message}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-           
+            
+            <Chatbox clients={clients} messages={messages}/>
             <div className="flex p-2">
                 <input
                     type="text"
@@ -107,9 +95,9 @@ export default function Chat() {
                     placeholder="Type your message..."
                     className="flex-grow p-2 rounded-l-md"
                 />
-                <button onClick={handleMessageSend} className="bg-[#06CF9C] rounded-r-md p-2">Send</button>
+                <button onClick={handleMessageSend} className="bg-[#06CF9C] rounded-r-md p-2 text-white">Send</button>
             </div>
-            <button onClick={handleLeaveRoom} className="bg-red-600 rounded-md m-2 p-2">Leave Room <Toaster/></button>
+            <button onClick={handleLeaveRoom} className="bg-red-600 rounded-md m-2 p-2 text-white">Leave Room <Toaster/></button>
         </div>
         
     );
