@@ -27,11 +27,7 @@ const Editor = () => {
  
 
     return <div className='bg-yellow-300  h-full'><div className='h-full'><textarea id="realtimeEditor"></textarea></div></div>;
-  return (
-    <div className="h-screen">
-      <textarea id="realtimeEditor"></textarea>
-    </div>
-  );
+
 };
 
 export default Editor;
