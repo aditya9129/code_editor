@@ -10,8 +10,8 @@ export default function Room(){
         <div className="w-1/3">
             <Chat socketRef={socketRef}/>
         </div>
-        <div className="bg-[#1C1E2A] w-2/3 h-full">
-            <CodeEditor socketRef={socketRef}/>
+        <div className="bg-[#1C1E2A] w-2/3 ">
+            <CodeEditor socketRef={socketRef} />
         </div>
         </div>
     )
