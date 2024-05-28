@@ -82,7 +82,7 @@ const Editor = ({ socketRef ,roomid,code}) => {
           tabSize: 2,
         }}
     />
-      {!wb && <WhiteBoard ref={boardref} className='' onChange={boardchange}/>}
+      {!wb && <WhiteBoard socketRef={socketRef} roomid={roomid}/>}
       <button
         onClick={runCode}
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"

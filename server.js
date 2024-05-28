@@ -96,7 +96,11 @@ io.on("connection", (socket) => {
     console.log(code,roomid);
     io.to(roomid).emit('sync', code );
   });
-
+  socket.on('board-sync', ({ data,roomid}) => {
+    
+    io.to(roomid).emit('b-sync', data);
+  });
+  
   socket.on("disconnecting", () => {
     const rooms = socket.rooms;
     rooms.forEach((roomid) => {
