@@ -11,12 +11,12 @@ const Editor = ({ socketRef ,roomid,code}) => {
   const [output, setOutput] = useState("");
   const [wb,setwb]=useState(true);
   console.log(code);
-  // useEffect(() => {
+  useEffect(() => {
     
-  //     // editorRef.current.editor.Value=code;
-  //     editorRef.current.editor.setValue(code);
     
-  // }, [code]);
+      editorRef.current.editor.setValue(code,22);
+    
+  }, [code]);
   const runCode = async () => {
     const code = editorRef.current.editor.getValue();
     const formattedCode = code.replace(/\n/g, ' '); // Replace '\n' with actual line breaks
