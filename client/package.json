@@ -18,6 +18,7 @@
     "dist": "^0.1.2",
     "env": "^0.0.2",
     "express": "^4.19.2",
+    "lodash.debounce": "^4.0.8",
     "node": "^18.20.1",
     "postcss": "^8.4.38",
     "prop-types": "^15.8.1",
@@ -29,7 +30,8 @@
     "react-router-dom": "^6.22.3",
     "socket.io-client": "^4.7.5",
     "tailwindcss": "^3.4.3",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
