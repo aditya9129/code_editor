@@ -1,79 +1,143 @@
+// import { useEffect, useRef, useState } from "react";
+// import AceEditor from "react-ace";
+// import "ace-builds/src-noconflict/theme-dracula";
+// import "ace-builds/src-noconflict/mode-javascript";
+// import io from "socket.io-client";
+
+// const socket = io("http://localhost:5000");
+
+// const CodeEditor = () => {
+//   const editorRef = useRef(null);
+//   const [output, setOutput] = useState("");
+
+//   useEffect(() => {
+//     socket.on("codeOutput", (data) => {
+//       setOutput(data.output);
+//     });
+
+//     return () => {
+//       socket.off("codeOutput");
+//     };
+//   }, []);
+
+//   const runCode = () => {
+//     const code = editorRef.current.editor.getValue();
+//     socket.emit("runCode", { code });
+//   };
+
+//   return (
+//     <div className="h-screen">
+//       <AceEditor
+//         ref={editorRef}
+//         mode="javascript"
+//         theme="dracula"
+//         name="editor"
+//         onChange={() => {}}
+//         fontSize={14}
+//         height="70vh"
+//         width="100%"
+//         showPrintMargin={false}
+//         showGutter={true}
+//         highlightActiveLine={true}
+//         value=""
+//         setOptions={{
+//           enableBasicAutocompletion: true,
+//           enableLiveAutocompletion: true,
+//           enableSnippets: false,
+//           showLineNumbers: true,
+//           tabSize: 2,
+//         }}
+//       />
+//       <button
+//         onClick={runCode}
+//         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+//       >
+//         Run Code
+//       </button>
+//       <pre className="mt-4 p-4 bg-gray-900 text-white rounded">{output}</pre>
+//     </div>
+//   );
+// };
+
+// export default CodeEditor;
+
 import { useEffect, useRef, useState } from "react";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/theme-dracula";
 import "ace-builds/src-noconflict/mode-javascript";
-import { initSocket } from "../../socket.js";
+import io from "socket.io-client";
 import { useParams } from "react-router-dom";
-import WhiteBoard from "./WhiteBoard.jsx";
-const Editor = ({ socketRef ,roomid,code}) => {
+import debounce from "lodash.debounce";
+
+const socket = io("http://localhost:5000");
+
+const CodeEditor = () => {
+  const { roomid } = useParams(); // Assume roomid is available from the URL
   const editorRef = useRef(null);
-  const boardref=useRef(null);
   const [output, setOutput] = useState("");
-  const [wb,setwb]=useState(true);
-  console.log(code);
+  const [initialCode, setInitialCode] = useState("");
+
   useEffect(() => {
-    
-    
-      editorRef.current.editor.setValue(code,22);
-    
-  }, [code]);
-  const runCode = async () => {
-    const code = editorRef.current.editor.getValue();
-    const formattedCode = code.replace(/\n/g, ' '); // Replace '\n' with actual line breaks
-   
-    try {
-      const response = await fetch("http://localhost:5000/runCode", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code: formattedCode }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        
-        setOutput(data.output);
-      } else {
-        setOutput(data.output);
+    socket.emit("join", { roomid, username: "User" });
+
+    socket.on("codeOutput", (data) => {
+      setOutput(data.output);
+    });
+
+    socket.on("codeChange", (data) => {
+      if (editorRef.current) {
+        const currentCode = editorRef.current.editor.getValue();
+        if (currentCode !== data.code) {
+          editorRef.current.editor.setValue(data.code, 1); // 1 to move the cursor to the end of the code
+        }
       }
-    } catch (error) {
-      console.error("Error:", error);
-      setOutput(error);
+    });
+
+    socket.on("initialCode", (data) => {
+      setInitialCode(data.code);
+    });
+
+    return () => {
+      socket.off("codeOutput");
+      socket.off("codeChange");
+      socket.off("initialCode");
+    };
+  }, [roomid]);
+
+  useEffect(() => {
+    if (editorRef.current && initialCode) {
+      editorRef.current.editor.setValue(initialCode, 1); // 1 to move the cursor to the end of the code
     }
-  };
-  const boardchange=()=>{
-    console.log('y');
-  }
-  const syncCode = () => {
+  }, [initialCode]);
+
+  const runCode = () => {
     const code = editorRef.current.editor.getValue();
-    console.log(editorRef.current);
-    console.log(code);
-    
-    if (code) {
-      socketRef.current.emit("sync-change", {
-        roomid,
-        code,
-      });
-      
-    }
+    socket.emit("runCode", { code });
+  };
+
+  const debounceCodeChange = debounce((newCode) => {
+    socket.emit("codeChange", { roomid, code: newCode });
+  }, 500);
+
+  const onCodeChange = (newCode) => {
+    debounceCodeChange(newCode);
   };
 
   return (
-    <div className="wb p-4">
-    
+    <div className="h-screen">
       <AceEditor
         ref={editorRef}
-        className={wb ? 'block' : 'hidden'}
         mode="javascript"
         theme="dracula"
         name="editor"
-        onChange={syncCode}
+        onChange={onCodeChange}
         fontSize={14}
         height="70vh"
         width="100%"
         showPrintMargin={false}
         showGutter={true}
         highlightActiveLine={true}
+        value={initialCode}
         setOptions={{
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: true,
@@ -81,25 +145,16 @@ const Editor = ({ socketRef ,roomid,code}) => {
           showLineNumbers: true,
           tabSize: 2,
         }}
-    />
-      {!wb && <WhiteBoard socketRef={socketRef} roomid={roomid}/>}
+      />
       <button
         onClick={runCode}
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
       >
         Run Code
       </button>
-      <button
-        onClick={()=>setwb(!wb)}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        {wb ? 'WhiteBoard':'Editor'}
-      </button>
-      <div className="mt-4 p-4 bg-gray-900 text-white rounded overflow-auto max-h-28">
-        <pre>{output}</pre>
-      </div>
+      <pre className="mt-4 p-4 bg-gray-900 text-white rounded">{output}</pre>
     </div>
   );
 };
 
-export default Editor;
+export default CodeEditor;
