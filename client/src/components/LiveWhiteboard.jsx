@@ -1,6 +1,6 @@
-import React from 'react';
-import Chat from './Chat';
-import WhiteBoard from './WhiteBoard';
+import React from "react";
+import Chat from "./Chat";
+import WhiteBoard from "./WhiteBoard";
 
 export default function LiveWhiteBoard() {
   return (
