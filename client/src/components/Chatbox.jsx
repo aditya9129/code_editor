@@ -1,11 +1,11 @@
 import { useState } from "react";
 import Member from "./Member";
 
-export default function Chatbox({ clients, messages, user }) {
+export default function Chatbox({ clients, messages, user ,socketid}) {
     const [showParticipants, setShowParticipants] = useState(false);
 
     return (
-        <div className="bg-[#1C1E2A] w-full h-[85vh] flex flex-col">
+        <div className="bg-[#1C1E2A] w-full h- flex flex-col">
             <div className="flex items-center justify-center">
                 <h1 className="text-white text-xl font-bold">Code Room</h1>
             </div>

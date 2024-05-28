@@ -5,70 +5,16 @@ import Chatbox from "./Chatbox.jsx";
 import { initSocket } from "../../socket.js";
 import { Toaster } from "react-hot-toast";
 
-export default function Chat({ socketRef }) {
-  const [clients, setClients] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState("");
-  const [user, setuser] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { roomid } = useParams();
+export default function Chat({ socketRef ,clients,messages,user,roomid,socketid}) {
+  // const [clients, setClients] = useState([]);
+  // const [messages, setMessages] = useState([]);
+   const [message, setMessage] = useState("");
+  // const [user, setuser] = useState("");
+   const navigate = useNavigate();
+   const location = useLocation();
+  //  const { roomid } = useParams();
 
-  useEffect(() => {
-    const init = async () => {
-      socketRef.current = await initSocket();
-      socketRef.current.on("connect_error", (err) => handleErrors(err));
-      socketRef.current.on("connect_failed", (err) => handleErrors(err));
-
-      function handleErrors(e) {
-        console.log("socket error", e);
-        toast.error("Socket connection failed, try again later.");
-        navigate("/");
-      }
-
-      socketRef.current.emit("join", {
-        roomid,
-        username: location.state?.username,
-      });
-
-      socketRef.current.on("joined", ({ clients, username, socketid }) => {
-        if (username !== location.state?.username) {
-          toast.success(`${username} joined the room.`);
-        }
-        setClients(clients);
-        setuser(location.state?.username);
-      });
-
-      socketRef.current.on("disconnected", ({ socketId, username }) => {
-        if (username !== location.state?.username) {
-          toast.success(`${username} left the room.`);
-          console.log(`${username} joined`);
-        }
-
-        setClients((prev) =>
-          prev.filter((client) => client.socketid !== socketId)
-        );
-      });
-
-      socketRef.current.on("message", (message) => {
-        setMessages((prev) => [...prev, message]);
-      });
-      socketRef.current.on("chat_history", (chatHistory) => {
-        setMessages(chatHistory);
-      });
-    };
-
-    init();
-    //when we return from useEffect it is cleaning function
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current.off("joined");
-        socketRef.current.off("disconnected");
-        socketRef.current = null;
-      }
-    };
-  }, []);
+ 
   function getCurrentTime() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, "0");
@@ -77,6 +23,7 @@ export default function Chat({ socketRef }) {
     return `${hours}:${minutes}`;
   }
   const handleMessageSend = () => {
+    console.log(socketRef);
     let time = getCurrentTime();
     if (message.trim()) {
       socketRef.current.emit("message", {
@@ -84,6 +31,8 @@ export default function Chat({ socketRef }) {
         message,
         roomid,
         time,
+        socketid
+        
       });
 
       setMessage("");
@@ -96,7 +45,7 @@ export default function Chat({ socketRef }) {
 
   return (
     <div className="bg-[#1C1E2A] w-full  flex flex-col">
-      <Chatbox clients={clients} messages={messages} user={user} />
+      <Chatbox clients={clients} messages={messages} user={user} socketid={socketid}/>
       <div className="flex p-2 mx-auto w-full">
         <input
           type="text"
@@ -126,3 +75,9 @@ export default function Chat({ socketRef }) {
     </div>
   );
 }
+
+
+
+
+
+
