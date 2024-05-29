@@ -31,8 +31,8 @@ export default function Chatbox({ clients, messages, user ,socketid}) {
                 </div>
             ) : (
                 <div className="h-full flex flex-col justify-end w-full">
-                    <div className="overflow-y-auto p-2 scrollbar-hide">
-                        {messages.slice().reverse().map((msg, idx) => (
+                    <div className="overflow-auto p-2 ">
+                        {messages.slice().map((msg, idx) => (
                             <div key={idx} className={`flex ${user !== msg.username ? 'justify-start' : 'justify-end'}`}>
                                 <div className={`text-white mb-1 ${user !== msg.username ? 'bg-[#06CF9C]' : 'bg-green-400'} rounded-lg p-2 inline-block max-w-full break-words`}>
                                     <strong>{msg.username}: </strong>
