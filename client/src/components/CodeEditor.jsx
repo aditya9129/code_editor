@@ -1,32 +1,31 @@
-import { useEffect, useRef, useState } from "react";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/theme-dracula";
-import "ace-builds/src-noconflict/mode-javascript";
-import WhiteBoard from "./WhiteBoard.jsx";
+import React, { useState, useEffect, useRef } from 'react';
+import AceEditor from 'react-ace';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/theme-dracula';
+import WhiteBoard from './WhiteBoard'; // Make sure to import your WhiteBoard component
+import debounce from 'lodash.debounce';
 
-const Editor = ({ editorRef,socketRef, roomid, code }) => {
+const Editor = ({ editorRef, socketRef, roomid, code }) => {
   const [output, setOutput] = useState("");
   const [wb, setWb] = useState(true);
-  //  console.log(socketRef.current);
+  const [p, setp] = useState('@');
+
   useEffect(() => {
-    console.log('called');
-     if (editorRef.current) {
+    if (editorRef.current) {
       const editor = editorRef.current.editor;
       const currentCode = editor.getValue();
-      // console.log(code);
+
       if (currentCode !== code) {
-       
-        editor.setValue(code, -1); // Set code and maintain the current cursor position
         const cursorPosition = editor.getCursorPosition();
-       editor.moveCursorToPosition(cursorPosition);
-      
-     }}
-   
-  }, [code]);
-   
+        editor.setValue(code, -1); // Set code and maintain the current cursor position
+        editor.moveCursorToPosition(cursorPosition);
+      }
+    }
+  }, [code, editorRef]);
+
   const runCode = async () => {
     const code = editorRef.current.editor.getValue();
-    const formattedCode = code.replace(/\n/g, " "); // Replace '\n' with actual line breaks
+    const formattedCode = code.replace(/\n/g, " ");
 
     try {
       const response = await fetch("http://localhost:5000/runCode", {
@@ -47,19 +46,20 @@ const Editor = ({ editorRef,socketRef, roomid, code }) => {
       setOutput(error.toString());
     }
   };
-  let prevcode=code;
+
   const syncCode = () => {
-    
     const code = editorRef.current.editor.getValue();
-    if (code !=prevcode) {
-        prevcode=code;
+    if (code ) { // Check if the current code is different from the previous code
+      setp(code);
       socketRef.current.emit("sync-change", {
         roomid,
         code,
       });
-     
     }
   };
+
+  // Create a debounced version of syncCode
+  const debouncedSyncCode = useRef(debounce(syncCode, 200)).current;
 
   return (
     <div className="wb p-4">
@@ -69,7 +69,7 @@ const Editor = ({ editorRef,socketRef, roomid, code }) => {
         mode="javascript"
         theme="dracula"
         name="editor"
-        onChange={syncCode}
+        onChange={debouncedSyncCode}
         fontSize={14}
         height="70vh"
         width="100%"

@@ -97,10 +97,7 @@ io.on("connection", (socket) => {
     console.log(code,roomid);
     io.to(roomid).emit('sync', code );
   });
-//   socket.on('onjoin-sync', ({ roomid, code }) => {
-//     console.log(code,roomid);
-//     io.to(roomid).emit('sync', code );
-//   });
+
   socket.on('board-sync', ({ data,roomid}) => {
     
     io.to(roomid).emit('b-sync', data);

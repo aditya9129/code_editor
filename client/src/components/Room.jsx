@@ -51,6 +51,18 @@ export default function Room() {
          
         }
       });
+      // editorRef.current.on("change", (instance, changes) => {
+      //   const { origin } = changes;
+      //   const newCode = instance.getValue();
+      //   setcde(newCode);
+      //   onCodeChange(newCode);
+      //   if (origin !== "setValue") {
+      //     socketRef.current.emit("sync-change", {
+      //       roomid,
+      //       code,
+      //     });
+      //   }
+      // });
       socketRef.current.on("sync", ( code ) => {
         setcode(code);
       });
