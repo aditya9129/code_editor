@@ -8,7 +8,6 @@ import debounce from 'lodash.debounce';
 const Editor = ({ editorRef, socketRef, roomid, code }) => {
   const [output, setOutput] = useState("");
   const [wb, setWb] = useState(true);
-  const [p, setp] = useState('@');
 
   useEffect(() => {
     if (editorRef.current) {
@@ -56,7 +55,7 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
     const code = editorRef.current.editor.getValue();
     
     if (code ) { // Check if the current code is different from the previous code
-      setp(code);
+      
       socketRef.current.emit("sync-change", {
         roomid,
         code,
@@ -99,11 +98,11 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
       </button>
       <button
         onClick={() => setWb(!wb)}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        className="mt-4 px-4 py-2 ml-2 bg-blue-500 text-white rounded"
       >
         {wb ? "WhiteBoard" : "Editor"}
       </button>
-      <div className="mt-4 p-4 bg-gray-900 text-white rounded overflow-auto max-h-28">
+      <div className="mt-4 p-4 bg-gray-900 border border-black text-white rounded overflow-auto h-28">
         <pre>{output}</pre>
       </div>
     </div>

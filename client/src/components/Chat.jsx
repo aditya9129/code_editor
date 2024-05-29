@@ -46,7 +46,7 @@ export default function Chat({ socketRef ,clients,messages,user,roomid,socketid}
   return (
     <div className="bg-[#1C1E2A] w-full  flex flex-col">
       <Chatbox clients={clients} messages={messages} user={user} socketid={socketid}/>
-      <div className="flex p-2 mx-auto w-full">
+      <div className="flex p-2 mt-24 mx-auto w-full">
         <input
           type="text"
           value={message}

@@ -72,12 +72,12 @@ io.on("connection", (socket) => {
       }
       socket.emit("codeOutput", { output: stdout });
 
-      // Clean up the temporary file
-    //   if (fs.existsSync(fileName)) {
-    //     fs.unlinkSync(fileName);
-    //   } else {
-    //     console.error(`File ${fileName} does not exist.`);
-    //   }
+    //  Clean up the temporary file
+      if (fs.existsSync(fileName)) {
+        fs.unlinkSync(fileName);
+      } else {
+        console.error(`File ${fileName} does not exist.`);
+      }
     });
   });
 

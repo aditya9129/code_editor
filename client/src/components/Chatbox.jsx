@@ -5,7 +5,7 @@ export default function Chatbox({ clients, messages, user ,socketid}) {
     const [showParticipants, setShowParticipants] = useState(false);
 
     return (
-        <div className="bg-[#1C1E2A] w-full h- flex flex-col">
+        <div className="bg-[#1C1E2A] w-full h-[70vh] flex flex-col">
             <div className="flex items-center justify-center">
                 <h1 className="text-white text-xl font-bold">Code Room</h1>
             </div>
@@ -31,7 +31,7 @@ export default function Chatbox({ clients, messages, user ,socketid}) {
                 </div>
             ) : (
                 <div className="h-full flex flex-col justify-end w-full">
-                    <div className="overflow-y-auto p-2">
+                    <div className="overflow-y-auto p-2 scrollbar-hide">
                         {messages.slice().reverse().map((msg, idx) => (
                             <div key={idx} className={`flex ${user !== msg.username ? 'justify-start' : 'justify-end'}`}>
                                 <div className={`text-white mb-1 ${user !== msg.username ? 'bg-[#06CF9C]' : 'bg-green-400'} rounded-lg p-2 inline-block max-w-full break-words`}>
