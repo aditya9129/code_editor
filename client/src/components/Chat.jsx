@@ -5,16 +5,18 @@ import Chatbox from "./Chatbox.jsx";
 import { initSocket } from "../../socket.js";
 import { Toaster } from "react-hot-toast";
 
-export default function Chat({ socketRef ,clients,messages,user,roomid,socketid}) {
-  // const [clients, setClients] = useState([]);
-  // const [messages, setMessages] = useState([]);
-   const [message, setMessage] = useState("");
-  // const [user, setuser] = useState("");
-   const navigate = useNavigate();
-   const location = useLocation();
-  //  const { roomid } = useParams();
+export default function Chat({
+  socketRef,
+  clients,
+  messages,
+  user,
+  roomid,
+  socketid,
+}) {
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
 
- 
   function getCurrentTime() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, "0");
@@ -22,8 +24,8 @@ export default function Chat({ socketRef ,clients,messages,user,roomid,socketid}
 
     return `${hours}:${minutes}`;
   }
+
   const handleMessageSend = () => {
-    console.log(socketRef);
     let time = getCurrentTime();
     if (message.trim()) {
       socketRef.current.emit("message", {
@@ -31,8 +33,7 @@ export default function Chat({ socketRef ,clients,messages,user,roomid,socketid}
         message,
         roomid,
         time,
-        socketid
-        
+        socketid,
       });
 
       setMessage("");
@@ -43,20 +44,32 @@ export default function Chat({ socketRef ,clients,messages,user,roomid,socketid}
     navigate("/");
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleMessageSend();
+    }
+  };
+
   return (
-    <div className="bg-[#1C1E2A] w-full  flex flex-col">
-      <Chatbox clients={clients} messages={messages} user={user} socketid={socketid}/>
+    <div className="bg-[#1C1E2A] w-full flex flex-col">
+      <Chatbox
+        clients={clients}
+        messages={messages}
+        user={user}
+        socketid={socketid}
+      />
       <div className="flex p-2 mt-24 mx-auto w-full">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           className="flex-grow p-2 rounded-l-md"
         />
         <button
           onClick={handleMessageSend}
-          className="bg-[#06CF9C] rounded-r-md p-2 text-white "
+          className="bg-[#06CF9C] rounded-r-md p-2 text-white"
         >
           <img
             width="20"
@@ -75,9 +88,3 @@ export default function Chat({ socketRef ,clients,messages,user,roomid,socketid}
     </div>
   );
 }
-
-
-
-
-
-
