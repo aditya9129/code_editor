@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 export default function Room() {
   const socketRef = useRef(null);
+  const editorRef = useRef(null);
   const [clients, setClients] = useState([]);
   const [messages, setMessages] = useState([]);
   const [code, setcode] = useState("");
@@ -41,6 +42,14 @@ export default function Room() {
         setClients(clients);
         setuser(location.state?.username);
         setsocketid(socketid);
+        const code = editorRef.current.editor.getValue();
+        if (code) {
+          socketRef.current.emit("sync-change", {
+            roomid,
+            code,
+          });
+         
+        }
       });
       socketRef.current.on("sync", ( code ) => {
         setcode(code);
@@ -84,7 +93,7 @@ export default function Room() {
         <Chat socketRef={socketRef} clients={clients} messages={messages} user={user} roomid={roomid}  socketid={socketid}/>
       </div>
       <div className="bg-[#1C1E2A] w-2/3  h-full">
-        <Editor socketRef={socketRef} roomid={roomid} code={code}/>
+        <Editor editorRef={editorRef} socketRef={socketRef} roomid={roomid} code={code} user={user}/>
       </div>
     </div>
   );

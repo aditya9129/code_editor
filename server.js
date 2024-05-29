@@ -21,6 +21,7 @@ const io = socketIo(server, {
 const userSocketMap = {};
 const roomChatHistory = {};
 
+
 function getAllConnectedClients(roomid) {
   const room = io.sockets.adapter.rooms.get(roomid);
   if (!room) return [];
@@ -96,6 +97,10 @@ io.on("connection", (socket) => {
     console.log(code,roomid);
     io.to(roomid).emit('sync', code );
   });
+//   socket.on('onjoin-sync', ({ roomid, code }) => {
+//     console.log(code,roomid);
+//     io.to(roomid).emit('sync', code );
+//   });
   socket.on('board-sync', ({ data,roomid}) => {
     
     io.to(roomid).emit('b-sync', data);

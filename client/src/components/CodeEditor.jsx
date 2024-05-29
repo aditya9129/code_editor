@@ -4,24 +4,26 @@ import "ace-builds/src-noconflict/theme-dracula";
 import "ace-builds/src-noconflict/mode-javascript";
 import WhiteBoard from "./WhiteBoard.jsx";
 
-const Editor = ({ socketRef, roomid, code }) => {
-  const editorRef = useRef(null);
+const Editor = ({ editorRef,socketRef, roomid, code }) => {
   const [output, setOutput] = useState("");
   const [wb, setWb] = useState(true);
-
+  //  console.log(socketRef.current);
   useEffect(() => {
-    if (editorRef.current) {
+    console.log('called');
+     if (editorRef.current) {
       const editor = editorRef.current.editor;
       const currentCode = editor.getValue();
-
+      // console.log(code);
       if (currentCode !== code) {
-        const cursorPosition = editor.getCursorPosition();
+       
         editor.setValue(code, -1); // Set code and maintain the current cursor position
-        editor.moveCursorToPosition(cursorPosition);
-      }
-    }
+        const cursorPosition = editor.getCursorPosition();
+       editor.moveCursorToPosition(cursorPosition);
+      
+     }}
+   
   }, [code]);
-
+   
   const runCode = async () => {
     const code = editorRef.current.editor.getValue();
     const formattedCode = code.replace(/\n/g, " "); // Replace '\n' with actual line breaks
@@ -45,14 +47,17 @@ const Editor = ({ socketRef, roomid, code }) => {
       setOutput(error.toString());
     }
   };
-
+  let prevcode=code;
   const syncCode = () => {
+    
     const code = editorRef.current.editor.getValue();
-    if (code) {
+    if (code !=prevcode) {
+        prevcode=code;
       socketRef.current.emit("sync-change", {
         roomid,
         code,
       });
+     
     }
   };
 
