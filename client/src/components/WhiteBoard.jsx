@@ -41,8 +41,7 @@ const WhiteBoard = ({ socketRef, roomid }) => {
     <canvas
       ref={canvasRef}
       id="whiteboard"
-      width="800"
-      height="600"
+      className='w-full h-[70vh] bg-white'
       style={{ border: '1px solid black' }} // Add a border for visibility
       onMouseMove={handleMouseMove}
     ></canvas>

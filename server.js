@@ -58,9 +58,9 @@ io.on("connection", (socket) => {
 
   socket.on("runCode", (data) => {
     const { code } = data;
-
+   console.lof(code)
     // Write the code to a temporary file
-    const fileName = "tempCode.js"; // Assuming JavaScript code for example
+    const fileName = "tempcCode.js"; // Assuming JavaScript code for example
     fs.writeFileSync(fileName, code);
 
     // Execute the code using Node.js
@@ -73,11 +73,11 @@ io.on("connection", (socket) => {
       socket.emit("codeOutput", { output: stdout });
 
       // Clean up the temporary file
-      if (fs.existsSync(fileName)) {
-        fs.unlinkSync(fileName);
-      } else {
-        console.error(`File ${fileName} does not exist.`);
-      }
+    //   if (fs.existsSync(fileName)) {
+    //     fs.unlinkSync(fileName);
+    //   } else {
+    //     console.error(`File ${fileName} does not exist.`);
+    //   }
     });
   });
 
@@ -121,10 +121,11 @@ io.on("connection", (socket) => {
 
 app.post("/runCode", (req, res) => {
   const { code } = req.body;
-
+   console.log(code);
   // For security reasons, never run untrusted code directly like this in a real application.
   exec(`node -e "${code}"`, (error, stdout, stderr) => {
     if (error) {
+        console.log(error);
       res.status(500).json({ output: stderr });
     } else {
       res.status(200).json({ output: stdout });
