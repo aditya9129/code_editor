@@ -105,9 +105,14 @@ io.on("connection", (socket) => {
   socket.on('drawing', (data) => {
     socket.broadcast.emit('drawing', data);
   });
-  socket.on('draw', (data) => {
-    console.log(data);
-    socket.broadcast.emit('draw', data);
+  socket.on('draw', ({offsetX, offsetY, isDrawing,roomid}) => {
+    let data={ offsetX, offsetY, isDrawing}
+     io.to(roomid).emit('draw', data);
+
+  });
+  socket.on('clear', ({roomid}) => {
+    console.log(roomid)
+    io.to(roomid).emit('clear', roomid);
   });
   socket.on("disconnecting", () => {
     const rooms = socket.rooms;
