@@ -102,7 +102,13 @@ io.on("connection", (socket) => {
     
     io.to(roomid).emit('b-sync', data);
   });
-  
+  socket.on('drawing', (data) => {
+    socket.broadcast.emit('drawing', data);
+  });
+  socket.on('draw', (data) => {
+    console.log(data);
+    socket.broadcast.emit('draw', data);
+  });
   socket.on("disconnecting", () => {
     const rooms = socket.rooms;
     rooms.forEach((roomid) => {

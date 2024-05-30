@@ -1,51 +1,78 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-
-const WhiteBoard = ({ socketRef, roomid }) => {
+function WhiteBoard({ socketRef }) {
   const canvasRef = useRef(null);
+  const contextRef = useRef(null);
+  const isDrawingRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
+    context.lineCap = 'round';
+    context.strokeStyle = 'black';
+    context.lineWidth = 10;
+    contextRef.current = context;
 
-    // Function to draw received data
-    const drawReceivedData = (data) => {
-      if (data.type === 'draw') {
-        drawPixel(data.x, data.y);
-      }
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const handleDraw = ({ offsetX, offsetY, isDrawing }) => {
+      if (!isDrawing) return;
+      context.lineTo(offsetX, offsetY);
+      context.stroke();
+      context.beginPath();
+      context.moveTo(offsetX, offsetY);
     };
 
-    // Event listener for drawing data from server
-    socketRef.current.on('board-sync', drawReceivedData);
+    socketRef.current.on('draw', handleDraw);
 
-    // Clean up event listener on component unmount
     return () => {
-      socketRef.current.off('board-sync', drawReceivedData);
+      socketRef.current.off('draw', handleDraw);
     };
-  }, [socketRef, roomid]);
+  }, [socketRef]);
 
-  const handleMouseMove = (event) => {
-    const { offsetX, offsetY } = event;
-    const data = { type: 'draw', x: offsetX, y: offsetY };
-    socketRef.current.emit('board-sync', { data, roomid });
-    drawPixel(offsetX, offsetY);
+  const getCanvasCoordinates = (nativeEvent) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    return {
+      offsetX: nativeEvent.clientX - rect.left,
+      offsetY: nativeEvent.clientY - rect.top,
+    };
   };
 
-  const drawPixel = (x, y) => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    context.fillRect(x, y, 5, 5); // Adjust size as needed
+  const startDrawing = (nativeEvent) => {
+    const { offsetX, offsetY } = getCanvasCoordinates(nativeEvent);
+    isDrawingRef.current = true;
+    contextRef.current.beginPath();
+    contextRef.current.moveTo(offsetX, offsetY);
+    socketRef.current.emit('draw', { offsetX, offsetY, isDrawing: true });
+  };
+
+  const endDrawing = () => {
+    isDrawingRef.current = false;
+    contextRef.current.closePath();
+    socketRef.current.emit('draw', { isDrawing: false });
+  };
+
+  const draw = (nativeEvent) => {
+    if (!isDrawingRef.current) return;
+    const { offsetX, offsetY } = getCanvasCoordinates(nativeEvent);
+    contextRef.current.lineTo(offsetX, offsetY);
+    contextRef.current.stroke();
+    contextRef.current.beginPath();
+    contextRef.current.moveTo(offsetX, offsetY);
+    socketRef.current.emit('draw', { offsetX, offsetY, isDrawing: true });
   };
 
   return (
     <canvas
       ref={canvasRef}
-      id="whiteboard"
-      className='w-full h-[70vh] bg-white'
-      style={{ border: '1px solid black' }} // Add a border for visibility
-      onMouseMove={handleMouseMove}
-    ></canvas>
+      onMouseDown={startDrawing}
+      onMouseUp={endDrawing}
+      onMouseMove={draw}
+      className="border border-black bg-white w-full h-[70vh]"
+    />
   );
-};
+}
 
 export default WhiteBoard;
