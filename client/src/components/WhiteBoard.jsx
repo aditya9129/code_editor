@@ -1,95 +1,135 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
-function WhiteBoard({ socketRef ,roomid}) {
+function WhiteBoard({ socketRef, roomid }) {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
-  const isDrawingRef = useRef(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [tool, setTool] = useState("pencil");
+  const [color, setColor] = useState("black");
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    context.lineCap = 'round';
-    context.strokeStyle = 'black';
+    canvas.width = window.innerWidth * 2;
+    canvas.height = window.innerHeight * 2;
+    canvas.style.width = `${window.innerWidth}px`;
+    canvas.style.height = `${window.innerHeight}px`;
+
+    const context = canvas.getContext("2d");
+    context.scale(2, 2);
+    context.lineCap = "round";
     context.lineWidth = 5;
     contextRef.current = context;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Set initial stroke color
+    context.strokeStyle = color;
 
-    const handleDraw = ({ offsetX, offsetY, isDrawing }) => {
+    // Add event listener for drawing
+    const handleDraw = ({ offsetX, offsetY, isDrawing, tool, color }) => {
       if (!isDrawing) return;
+      if (tool === "eraser") {
+        context.globalCompositeOperation = "destination-out";
+        context.strokeStyle = "rgba(0,0,0,1)";
+        context.lineWidth = 10;
+      } else {
+        context.globalCompositeOperation = "source-over";
+        context.strokeStyle = color;
+        context.lineWidth = 5;
+      }
       context.lineTo(offsetX, offsetY);
       context.stroke();
       context.beginPath();
       context.moveTo(offsetX, offsetY);
     };
 
-    socketRef.current.on('draw', handleDraw);
-    socketRef.current.on('clear', clearCanvas);
+    socketRef.current.on("draw", handleDraw);
+    socketRef.current.on("clear", clearCanvas);
 
     return () => {
-      socketRef.current.off('draw', handleDraw);
-      socketRef.current.off('clear', clearCanvas);
+      socketRef.current.off("draw", handleDraw);
+      socketRef.current.off("clear", clearCanvas);
     };
-  }, [socketRef]);
+  }, [socketRef, color]);
 
-  const getCanvasCoordinates = (nativeEvent) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    return {
-      offsetX: nativeEvent.clientX - rect.left,
-      offsetY: nativeEvent.clientY - rect.top,
-    };
-  };
+  // Listen for changes in color
+  useEffect(() => {
+    // Set the stroke color whenever the color changes
+    contextRef.current.strokeStyle = color;
+  }, [color]);
 
-  const startDrawing = (nativeEvent) => {
-    const { offsetX, offsetY } = getCanvasCoordinates(nativeEvent);
-    isDrawingRef.current = true;
+  const startDrawing = (e) => {
+    const { offsetX, offsetY } = e.nativeEvent;
     contextRef.current.beginPath();
     contextRef.current.moveTo(offsetX, offsetY);
-    socketRef.current.emit('draw', { offsetX, offsetY, isDrawing: true ,roomid:roomid});
+    setIsDrawing(true);
+    socketRef.current.emit("draw", {
+      offsetX,
+      offsetY,
+      isDrawing: true,
+      tool,
+      color,
+      roomid,
+    });
   };
 
   const endDrawing = () => {
-    isDrawingRef.current = false;
     contextRef.current.closePath();
-    socketRef.current.emit('draw', { isDrawing: false,roomid:roomid });
+    setIsDrawing(false);
+    socketRef.current.emit("draw", { isDrawing: false, roomid });
   };
 
-  const draw = (nativeEvent) => {
-    if (!isDrawingRef.current) return;
-    const { offsetX, offsetY } = getCanvasCoordinates(nativeEvent);
+  const draw = (e) => {
+    if (!isDrawing) return;
+    const { offsetX, offsetY } = e.nativeEvent;
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
     contextRef.current.beginPath();
     contextRef.current.moveTo(offsetX, offsetY);
-    socketRef.current.emit('draw', { offsetX, offsetY, isDrawing: true,roomid:roomid });
+    socketRef.current.emit("draw", {
+      offsetX,
+      offsetY,
+      isDrawing: true,
+      tool,
+      color,
+      roomid,
+    });
   };
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   const handleClear = () => {
     clearCanvas();
-    socketRef.current.emit('clear',{roomid});
+    socketRef.current.emit("clear", { roomid });
   };
 
   return (
-    <div className='w-full h-[70vh]'>
-     
+    <div className="w-full h-[70vh]">
+      <div className="controls">
+        <button onClick={() => setTool("pencil")}>Pencil</button>
+        <button onClick={() => setTool("eraser")}>Eraser</button>
+        <input
+          type="color"
+          onChange={(e) => setColor(e.target.value)}
+          value={color}
+        />
+        <button
+          onClick={handleClear}
+          className="mb-2 p-2 bg-red-500 text-white rounded"
+        >
+          Clear Board
+        </button>
+      </div>
       <canvas
         ref={canvasRef}
         onMouseDown={startDrawing}
-        onMouseUp={endDrawing}
         onMouseMove={draw}
+        onMouseUp={endDrawing}
+        onMouseOut={endDrawing}
         className="border border-black bg-white w-full h-[64vh]"
       />
-       <button onClick={handleClear} className="mb-2 p-2 bg-red-500 text-white rounded">
-        Clear Board
-      </button>
     </div>
   );
 }
