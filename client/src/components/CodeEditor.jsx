@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-javascript';
-import 'ace-builds/src-noconflict/theme-dracula';
+import 'ace-builds/src-noconflict/theme-twilight'; // Updated theme
 import WhiteBoard from './WhiteBoard'; // Make sure to import your WhiteBoard component
 import debounce from 'lodash.debounce';
 
@@ -67,44 +67,53 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
   const debouncedSyncCode = useRef(debounce(syncCode, 200)).current;
 
   return (
-    <div className="wb p-4">
-      <AceEditor
-        ref={editorRef}
-        className={wb ? "block" : "hidden"}
-        mode="javascript"
-        theme="dracula"
-        name="editor"
-        onChange={syncCode}
-        fontSize={14}
-        height="70vh"
-        width="100%"
-        showPrintMargin={false}
-        showGutter={true}
-        highlightActiveLine={true}
-        setOptions={{
-          enableBasicAutocompletion: true,
-          enableLiveAutocompletion: true,
-          enableSnippets: false,
-          showLineNumbers: true,
-          tabSize: 2,
-        }}
-      />
-      {!wb && <WhiteBoard socketRef={socketRef} roomid={roomid} />}
-      <button
-        onClick={runCode}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Run Code
-      </button>
-      <button
-        onClick={() => setWb(!wb)}
-        className="mt-4 px-4 py-2 ml-2 bg-blue-500 text-white rounded"
-      >
-        {wb ? "WhiteBoard" : "Editor"}
-      </button>
-      <div className="mt-4 p-4 bg-gray-900 border border-black text-white rounded overflow-auto h-28">
-        <pre>{output}</pre>
+    <div className="bg-[#141414] border rounded-lg m-1 space-y-4">
+      <div className=''>
+        <AceEditor
+          ref={editorRef}
+          className={wb ? "block" : "hidden"}
+          mode="javascript"
+          theme="twilight" // Updated theme
+          name="editor"
+          onChange={syncCode}
+          fontSize={14}
+          height="71vh"
+          width="100%"
+          showPrintMargin={false}
+          showGutter={true}
+          highlightActiveLine={true}
+          setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: false,
+            showLineNumbers: true,
+            tabSize: 2,
+          }}
+        />
       </div>
+      {!wb && <WhiteBoard socketRef={socketRef} roomid={roomid} className=" w-full" />}
+      <div className="flex flex-row-reverse mx-2 bg-[#141414] ">
+        {wb && (
+          <button
+            onClick={runCode}
+            className="mt-4 mx-2 px-4  bg-black hover:bg-[#363636] text-white rounded transition duration-300"
+          >
+            Run Code
+          </button>
+        )}
+        <button
+          onClick={() => setWb(!wb)}
+          className="mt-4 px-4 py-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
+        >
+          {wb ? "WhiteBoard" : "Editor"}
+        </button>
+      </div>
+      {wb && (
+        <div className="bg-[#1f1f1f] text-white rounded overflow-auto h-28">
+          <p className="text-[#3B3B3B]">{'//output'}</p>
+          <pre>{output}</pre>
+        </div>
+      )}
     </div>
   );
 };

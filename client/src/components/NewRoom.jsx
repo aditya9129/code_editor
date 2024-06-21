@@ -27,10 +27,10 @@ export default function NewRoom() {
   console.log(roomid);
 
   return (
-    <div className=" bg-[#1C1E2A] flex justify-center items-center h-screen">
+    <div className=" bg-gray-400 flex justify-center items-center h-screen " style={{ backgroundImage: `url(https://img.freepik.com/free-vector/gradient-black-background-with-cubes_23-2149152315.jpg?t=st=1718965564~exp=1718969164~hmac=5314c089df692bc87e2877c79f940071ba8001f2a53c16bf407bc4d795e39981&w=1060)`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="m-2 p-2 flex flex-col items-center">
         <form className="p-2" onSubmit={submit}>
-          <h1 className="text-white text-2xl m-2">ROOM</h1>
+          <h1 className="text-white text-2xl m-2 font-bold">ROOM</h1>
           <input
             placeholder="enter id"
             className="rounded-md w-full m-2 p-2"
@@ -46,13 +46,13 @@ export default function NewRoom() {
             onChange={(e) => setusername(e.target.value)}
             required
           ></input>
-          <button className="bg-[#06CF9C] p-2 m-2 rounded-md text-white text-xl">
+          <button className="bg-gray-700 p-2 m-2 rounded-md text-white text-xl">
             JOIN
           </button>
         </form>
-        <p className="text-white">
+        <p className="text-white font-bold">
           Dont have room id?{" "}
-          <button onClick={handlenewrom} className="text-[#06CF9C]">
+          <button onClick={handlenewrom} className="text-gray-700 font-bold text-md">
             New room
           </button>{" "}
           <Toaster />

@@ -51,18 +51,7 @@ export default function Room() {
          
         }
       });
-      // editorRef.current.on("change", (instance, changes) => {
-      //   const { origin } = changes;
-      //   const newCode = instance.getValue();
-      //   setcde(newCode);
-      //   onCodeChange(newCode);
-      //   if (origin !== "setValue") {
-      //     socketRef.current.emit("sync-change", {
-      //       roomid,
-      //       code,
-      //     });
-      //   }
-      // });
+    
       socketRef.current.on("sync", ( code ) => {
         setcode(code);
       });
@@ -100,11 +89,11 @@ export default function Room() {
     };
   }, [location.state?.username, navigate, roomid, socketRef]);
   return (
-    <div className="w-full flex h-screen bg-[#1C1E2A]">
+    <div className="w-full flex h-screen bg-black">
       <div className="w-1/3 ">
         <Chat socketRef={socketRef} clients={clients} messages={messages} user={user} roomid={roomid}  socketid={socketid}/>
       </div>
-      <div className="bg-[#1C1E2A] w-2/3  h-full">
+      <div className="bg-black w-2/3  h-full">
         <Editor editorRef={editorRef} socketRef={socketRef} roomid={roomid} code={code} user={user}/>
       </div>
     </div>

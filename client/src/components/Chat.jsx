@@ -51,40 +51,44 @@ export default function Chat({
   };
 
   return (
-    <div className="bg-[#1C1E2A] w-full flex flex-col">
-      <Chatbox
-        clients={clients}
-        messages={messages}
-        user={user}
-        socketid={socketid}
+    <div className="bg-[#1f1f1f] w-full flex flex-col border rounded-lg space-y-4 items-center">
+    <div className=" ">
+      <h1 className="text-xl text-white font-semibold p-1">ChatBox</h1>
+    </div>
+    <Chatbox
+      clients={clients}
+      messages={messages}
+      user={user}
+      socketid={socketid}
+      className="flex-grow"
+    />
+    <div className="flex p-2 mx-auto w-full space-x-2 items-center">
+      <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Type your message..."
+        className="flex-grow p-2 rounded-l-md bg-[#020002] text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
       />
-      <div className="flex p-2 mt-24 mx-auto w-full">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
-          className="flex-grow p-2 rounded-l-md"
-        />
-        <button
-          onClick={handleMessageSend}
-          className="bg-[#06CF9C] rounded-r-md p-2 text-white"
-        >
-          <img
-            width="20"
-            height="20"
-            src="https://img.icons8.com/ios-glyphs/30/filled-sent.png"
-            alt="filled-sent"
-          />
-        </button>
-      </div>
       <button
-        onClick={handleLeaveRoom}
-        className="bg-red-600 rounded-md m-2 p-2 text-white"
+        onClick={handleMessageSend}
+        className="bg-white rounded-r-md p-2 text-white flex items-center justify-center"
       >
-        Leave Room <Toaster />
+        <img
+          width="20"
+          height="20"
+          className="bg-white"
+          src="https://img.icons8.com/ios-glyphs/30/filled-sent.png"
+          alt="filled-sent"
+        />
       </button>
     </div>
+   
+    <Toaster />
+  </div>
+  
+
+  
   );
 }

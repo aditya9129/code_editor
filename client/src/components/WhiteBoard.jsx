@@ -9,10 +9,13 @@ function WhiteBoard({ socketRef, roomid }) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = window.innerWidth * 2;
-    canvas.height = window.innerHeight * 2;
-    canvas.style.width = `${window.innerWidth}px`;
-    canvas.style.height = `${window.innerHeight}px`;
+    const canvasHeight = window.innerHeight * 0.8; // Set the desired height (50% of window height)
+    const canvasWidth = window.innerWidth*0.66;
+
+    canvas.width = canvasWidth * 0.66;
+    canvas.height = canvasHeight * 8;
+    canvas.style.width = `${canvasWidth}px`;
+    canvas.style.height = `${canvasHeight}px`;
 
     const context = canvas.getContext("2d");
     context.scale(2, 2);
@@ -106,21 +109,24 @@ function WhiteBoard({ socketRef, roomid }) {
   };
 
   return (
-    <div className="w-full h-[70vh]">
-      <div className="controls">
-        <button onClick={() => setTool("pencil")}>Pencil</button>
-        <button onClick={() => setTool("eraser")}>Eraser</button>
+    <div className="">
+      <div className="flex flex-row-reverse">
+      <button
+          onClick={handleClear}
+          className="mb-1 p-2 bg-black text-white rounded"
+        >
+          Clear Board
+        </button>
         <input
           type="color"
           onChange={(e) => setColor(e.target.value)}
           value={color}
+          className="rounded-md mx-2"
         />
-        <button
-          onClick={handleClear}
-          className="mb-2 p-2 bg-red-500 text-white rounded"
-        >
-          Clear Board
-        </button>
+        <button onClick={() => setTool("pencil")}><img className="w-6 mx-2 rounded-md bg-white" src="https://www.svgrepo.com/show/532977/pencil.svg"></img></button>
+        <button onClick={() => setTool("eraser")}><img className="w-6 mx-2 rounded-md bg-white" src="https://www.svgrepo.com/show/496171/eraser.svg"></img></button>
+       
+    
       </div>
       <canvas
         ref={canvasRef}
@@ -128,7 +134,7 @@ function WhiteBoard({ socketRef, roomid }) {
         onMouseMove={draw}
         onMouseUp={endDrawing}
         onMouseOut={endDrawing}
-        className="border border-black bg-white w-full h-[64vh]"
+        className="border border-black bg-white"
       />
     </div>
   );
