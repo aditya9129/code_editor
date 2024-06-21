@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import  { useState, useEffect, useRef } from 'react';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-twilight'; // Updated theme
 import WhiteBoard from './WhiteBoard'; // Make sure to import your WhiteBoard component
 import debounce from 'lodash.debounce';
 
+// eslint-disable-next-line react/prop-types
 const Editor = ({ editorRef, socketRef, roomid, code }) => {
   const [output, setOutput] = useState("");
   const [wb, setWb] = useState(true);

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams, useNavigate, } from "react-router-dom";
 import { useRef } from "react";
 import toast from "react-hot-toast";
-import { Toaster } from "react-hot-toast";
+
 export default function Room() {
   const socketRef = useRef(null);
   const editorRef = useRef(null);

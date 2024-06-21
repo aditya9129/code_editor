@@ -2,6 +2,7 @@ import { useState } from "react";
 import Member from "./Member";
 import { useNavigate } from "react-router-dom";
 
+// eslint-disable-next-line react/prop-types
 export default function Chatbox({ clients, messages, user ,socketid}) {
     const [showParticipants, setShowParticipants] = useState(false);
     const navigate = useNavigate();

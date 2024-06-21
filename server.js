@@ -32,7 +32,7 @@ function getAllConnectedClients(roomid) {
 }
 
 io.on("connection", (socket) => {
-  console.log("New client connected");
+  // console.log("New client connected");
 
   socket.on("join", ({ roomid, username }) => {
     if (!username) {
@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
 
   socket.on("runCode", (data) => {
     const { code } = data;
-    console.log(code);
+    // console.log(code);
     // Write the code to a temporary file
     const fileName = "tempcCode.js"; // Assuming JavaScript code for example
     fs.writeFileSync(fileName, code);
@@ -82,7 +82,7 @@ io.on("connection", (socket) => {
 
   socket.on("message", ({ username, message, roomid, time, socketid }) => {
     const chatMessage = { username, message, time, socketid };
-    console.log(chatMessage);
+    // console.log(chatMessage);
     // Store the message in chat history
     if (!roomChatHistory[roomid]) {
       roomChatHistory[roomid] = [];
@@ -92,7 +92,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sync-change", ({ roomid, code }) => {
-    console.log(code, roomid);
+    // console.log(code, roomid);
     io.to(roomid).emit("sync", code);
   });
 
@@ -118,13 +118,13 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     delete userSocketMap[socket.id];
-    console.log("Client disconnected");
+    // console.log("Client disconnected");
   });
 });
 
 app.post("/runCode", (req, res) => {
   const { code } = req.body;
-  console.log(code);
+  // console.log(code);
   // For security reasons, never run untrusted code directly like this in a real application.
   exec(`node -e "${code}"`, (error, stdout, stderr) => {
     if (error) {
