@@ -24,33 +24,33 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
     }
   }, [code, editorRef]);
 
-  const runCode = async () => {
-    const code = editorRef.current.editor.getValue();
-    const codeWithoutComments = code
-      .split('\n')
-      .map(line => line.replace(/\/\/.*$/, '').trim()) // Remove comments and trim each line
-      .join(' ')
-      .replace(/"/g, "'"); // Replace double quotes with single quotes
+  // const runCode = async () => {
+  //   const code = editorRef.current.editor.getValue();
+  //   const codeWithoutComments = code
+  //     .split('\n')
+  //     .map(line => line.replace(/\/\/.*$/, '').trim()) // Remove comments and trim each line
+  //     .join(' ')
+  //     .replace(/"/g, "'"); // Replace double quotes with single quotes
   
-    try {
-      const response = await fetch("https://code-editor-1-koew.onrender.com/runCode", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code: codeWithoutComments }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setOutput(data.output);
-      } else {
-        setOutput(data.output);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setOutput(error.toString());
-    }
-  };
+  //   try {
+  //     const response = await fetch("https://code-editor-1-koew.onrender.com/runCode", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ code: codeWithoutComments }),
+  //     });
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       setOutput(data.output);
+  //     } else {
+  //       setOutput(data.output);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     setOutput(error.toString());
+  //   }
+  // };
   
 
   const syncCode = () => {
@@ -97,7 +97,7 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
       <div className="flex flex-row-reverse mx-2 bg-[#141414] ">
         {wb && (
           <button
-            onClick={runCode}
+            
             className="mt-4 mx-2 px-4 mb-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
           >
             Run Code

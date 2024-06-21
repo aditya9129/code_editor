@@ -30,14 +30,13 @@ const path = require("path");
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors({
-  origin: "https://code-editor-1-koew.onrender.com", // Update with your frontend URL
-  methods: ["GET", "POST"],
-}));
+// app.use((req, res, next) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/dist')));
+// app.use(express.static(path.join(__dirname, 'client/dist')));
 
 const io = socketIo(server);
 
@@ -47,7 +46,7 @@ const io = socketIo(server);
 
 
 // All remaining requests return the React app, so it can handle routing.
-app.get('*', (req, res) => {
+app.use((req, res,next) => {
   res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
 });
 
