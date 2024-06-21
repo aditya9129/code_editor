@@ -113,7 +113,7 @@ function WhiteBoard({ socketRef, roomid }) {
       <div className="flex flex-row-reverse">
       <button
           onClick={handleClear}
-          className="mb-1 p-2 bg-black text-white rounded"
+          className="mb-1 p-2 mr-2 bg-black text-white rounded"
         >
           Clear Board
         </button>
@@ -121,7 +121,7 @@ function WhiteBoard({ socketRef, roomid }) {
           type="color"
           onChange={(e) => setColor(e.target.value)}
           value={color}
-          className="rounded-md mx-2"
+          className="rounded-md mx-2 mt-2"
         />
         <button onClick={() => setTool("pencil")}><img className="w-6 mx-2 rounded-md bg-white" src="https://www.svgrepo.com/show/532977/pencil.svg"></img></button>
         <button onClick={() => setTool("eraser")}><img className="w-6 mx-2 rounded-md bg-white" src="https://www.svgrepo.com/show/496171/eraser.svg"></img></button>

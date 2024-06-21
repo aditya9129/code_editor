@@ -96,14 +96,14 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
         {wb && (
           <button
             onClick={runCode}
-            className="mt-4 mx-2 px-4  bg-black hover:bg-[#363636] text-white rounded transition duration-300"
+            className="mt-4 mx-2 px-4 mb-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
           >
             Run Code
           </button>
         )}
         <button
           onClick={() => setWb(!wb)}
-          className="mt-4 px-4 py-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
+          className="mt-4 px-4 py-2 mb-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
         >
           {wb ? "WhiteBoard" : "Editor"}
         </button>
