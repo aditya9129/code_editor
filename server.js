@@ -1,22 +1,72 @@
+// const express = require("express");
+// const http = require("http");
+// const socketIo = require("socket.io");
+// const { exec } = require("child_process");
+// const fs = require("fs");
+// const cors = require("cors");
+
+// const app = express();
+// const server = http.createServer(app);
+
+// app.use(cors());
+// app.use(express.json());
+
+// const io = socketIo(server, {
+//   cors: {
+//     origin: "http://localhost:5173", // Update the frontend port as per your setup
+//     methods: ["GET", "POST"],
+//   },
+// });
+
+
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const { exec } = require("child_process");
 const fs = require("fs");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors({
+  origin: "https://code-editor-1-koew.onrender.com", // Update with your frontend URL
+  methods: ["GET", "POST"],
+}));
 app.use(express.json());
 
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:5173", // Update the frontend port as per your setup
-    methods: ["GET", "POST"],
-  },
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/dist')));
+
+const io = socketIo(server);
+
+// Your socket.io and other backend logic here
+
+
+
+
+// All remaining requests return the React app, so it can handle routing.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
 });
+
+// Your socket.io and other backend logic here
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const userSocketMap = {};
 const roomChatHistory = {};

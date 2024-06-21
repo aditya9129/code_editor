@@ -1,3 +1,4 @@
+
 import  { useState, useEffect, useRef } from 'react';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-javascript';
@@ -32,7 +33,7 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
       .replace(/"/g, "'"); // Replace double quotes with single quotes
   
     try {
-      const response = await fetch("http://localhost:5000/runCode", {
+      const response = await fetch("https://code-editor-1-koew.onrender.com/runCode", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
