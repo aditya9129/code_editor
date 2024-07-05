@@ -25,6 +25,7 @@ export default function Chat({
   }
 
   const handleMessageSend = () => {
+    //get current time 
     let time = getCurrentTime();
     if (message.trim()) {
       socketRef.current.emit("message", {
@@ -38,9 +39,7 @@ export default function Chat({
       setMessage("");
     }
   };
-
   
-
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleMessageSend();
@@ -84,8 +83,6 @@ export default function Chat({
    
     <Toaster />
   </div>
-  
-
   
   );
 }
