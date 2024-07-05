@@ -13,9 +13,7 @@ export default function Chat({
   socketid,
 }) {
   const [message, setMessage] = useState("");
- 
   const location = useLocation();
-
   function getCurrentTime() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, "0");
