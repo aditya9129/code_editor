@@ -1,6 +1,7 @@
-import React from 'react';
+
 import Avatar from 'react-avatar';
 
+// eslint-disable-next-line react/prop-types
 export default function Member( {username}) {
 
     return (

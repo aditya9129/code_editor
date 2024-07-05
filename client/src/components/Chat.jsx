@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import Chatbox from "./Chatbox.jsx";
 import { initSocket } from "../../socket.js";
 import { Toaster } from "react-hot-toast";
@@ -14,7 +13,7 @@ export default function Chat({
   socketid,
 }) {
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+ 
   const location = useLocation();
 
   function getCurrentTime() {
@@ -40,9 +39,7 @@ export default function Chat({
     }
   };
 
-  const handleLeaveRoom = () => {
-    navigate("/");
-  };
+  
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {

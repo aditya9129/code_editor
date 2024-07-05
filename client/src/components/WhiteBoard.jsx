@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import  { useEffect, useRef, useState } from "react";
 
+// eslint-disable-next-line react/prop-types
 function WhiteBoard({ socketRef, roomid }) {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -110,7 +111,7 @@ function WhiteBoard({ socketRef, roomid }) {
       <div className="flex flex-row-reverse">
         <button
           onClick={handleClear}
-          className="mb-1 p-2 bg-black text-white rounded"
+          className="mb-1 p-2 mr-2 bg-black text-white rounded"
         >
           Clear Board
         </button>
@@ -118,7 +119,7 @@ function WhiteBoard({ socketRef, roomid }) {
           type="color"
           onChange={(e) => setColor(e.target.value)}
           value={color}
-          className="rounded-md mx-2"
+          className="rounded-md mx-2 mt-2"
         />
         <button onClick={() => setTool("pencil")}>
           <img
