@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+// eslint-disable-next-line react/prop-types
 function WhiteBoard({ socketRef, roomid }) {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -9,29 +10,25 @@ function WhiteBoard({ socketRef, roomid }) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const canvasHeight = window.innerHeight * 0.8; // Set the desired height (50% of window height)
-    const canvasWidth = window.innerWidth*0.66;
+    const canvasHeight = window.innerHeight * 0.8; // Set the desired height (80% of window height)
+    const canvasWidth = window.innerWidth * 0.66;
 
-    canvas.width = canvasWidth * 0.66;
-    canvas.height = canvasHeight * 8;
+    canvas.width = canvasWidth * 2; // Double the width and height for better resolution
+    canvas.height = canvasHeight * 2;
     canvas.style.width = `${canvasWidth}px`;
     canvas.style.height = `${canvasHeight}px`;
 
     const context = canvas.getContext("2d");
-    context.scale(2, 2);
+    context.scale(2, 2); // Scale down the context to match the actual display size
     context.lineCap = "round";
     context.lineWidth = 5;
     contextRef.current = context;
-
-    // Set initial stroke color
-    context.strokeStyle = color;
 
     // Add event listener for drawing
     const handleDraw = ({ offsetX, offsetY, isDrawing, tool, color }) => {
       if (!isDrawing) return;
       if (tool === "eraser") {
         context.globalCompositeOperation = "destination-out";
-        context.strokeStyle = "rgba(0,0,0,1)";
         context.lineWidth = 10;
       } else {
         context.globalCompositeOperation = "source-over";
@@ -51,12 +48,13 @@ function WhiteBoard({ socketRef, roomid }) {
       socketRef.current.off("draw", handleDraw);
       socketRef.current.off("clear", clearCanvas);
     };
-  }, [socketRef, color]);
+  }, [socketRef]);
 
   // Listen for changes in color
   useEffect(() => {
-    // Set the stroke color whenever the color changes
-    contextRef.current.strokeStyle = color;
+    if (contextRef.current) {
+      contextRef.current.strokeStyle = color;
+    }
   }, [color]);
 
   const startDrawing = (e) => {
@@ -75,8 +73,8 @@ function WhiteBoard({ socketRef, roomid }) {
   };
 
   const endDrawing = () => {
-    contextRef.current.closePath();
     setIsDrawing(false);
+    contextRef.current.closePath();
     socketRef.current.emit("draw", { isDrawing: false, roomid });
   };
 
@@ -109,11 +107,11 @@ function WhiteBoard({ socketRef, roomid }) {
   };
 
   return (
-    <div className="">
+    <div>
       <div className="flex flex-row-reverse">
-      <button
+        <button
           onClick={handleClear}
-          className="mb-1 p-2 bg-black text-white rounded"
+          className="mb-1 p-2 mr-2 bg-black text-white rounded"
         >
           Clear Board
         </button>
@@ -121,12 +119,22 @@ function WhiteBoard({ socketRef, roomid }) {
           type="color"
           onChange={(e) => setColor(e.target.value)}
           value={color}
-          className="rounded-md mx-2"
+          className="rounded-md mx-2 mt-2"
         />
-        <button onClick={() => setTool("pencil")}><img className="w-6 mx-2 rounded-md bg-white" src="https://www.svgrepo.com/show/532977/pencil.svg"></img></button>
-        <button onClick={() => setTool("eraser")}><img className="w-6 mx-2 rounded-md bg-white" src="https://www.svgrepo.com/show/496171/eraser.svg"></img></button>
-       
-    
+        <button onClick={() => setTool("pencil")}>
+          <img
+            className="w-6 mx-2 rounded-md bg-white"
+            src="https://www.svgrepo.com/show/532977/pencil.svg"
+            alt="Pencil"
+          />
+        </button>
+        <button onClick={() => setTool("eraser")}>
+          <img
+            className="w-6 mx-2 rounded-md bg-white"
+            src="https://www.svgrepo.com/show/496171/eraser.svg"
+            alt="Eraser"
+          />
+        </button>
       </div>
       <canvas
         ref={canvasRef}

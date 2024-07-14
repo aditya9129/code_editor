@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 const notify = () => toast("Room Id generated");
+import backg from "../assets/6193220.jpg";
 // const copy = () => toast('RoomId copied');
 export default function NewRoom() {
   const [roomid, setroomid] = useState("");
@@ -27,7 +28,14 @@ export default function NewRoom() {
   console.log(roomid);
 
   return (
-    <div className=" bg-gray-400 flex justify-center items-center h-screen " style={{ backgroundImage: `url(https://img.freepik.com/free-vector/gradient-black-background-with-cubes_23-2149152315.jpg?t=st=1718965564~exp=1718969164~hmac=5314c089df692bc87e2877c79f940071ba8001f2a53c16bf407bc4d795e39981&w=1060)`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div
+      className=" bg-gray-400 flex justify-center items-center h-screen "
+      style={{
+        backgroundImage: `url(${backg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <div className="m-2 p-2 flex flex-col items-center">
         <form className="p-2" onSubmit={submit}>
           <h1 className="text-white text-2xl m-2 font-bold">ROOM</h1>
@@ -52,7 +60,10 @@ export default function NewRoom() {
         </form>
         <p className="text-white font-bold">
           Dont have room id?{" "}
-          <button onClick={handlenewrom} className="text-gray-700 font-bold text-md">
+          <button
+            onClick={handlenewrom}
+            className="text-gray-700 font-bold text-md"
+          >
             New room
           </button>{" "}
           <Toaster />

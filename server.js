@@ -4,19 +4,17 @@ const socketIo = require("socket.io");
 const { exec } = require("child_process");
 const fs = require("fs");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
+const io = socketIo(server);
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:5173", // Update the frontend port as per your setup
-    methods: ["GET", "POST"],
-  },
-});
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "client/dist")));
 
 const userSocketMap = {};
 const roomChatHistory = {};
@@ -40,7 +38,6 @@ io.on("connection", (socket) => {
       return;
     }
     userSocketMap[socket.id] = username;
-    console.log(socket.id);
     socket.join(roomid);
     const clients = getAllConnectedClients(roomid);
     if (roomChatHistory[roomid]) {
@@ -57,21 +54,16 @@ io.on("connection", (socket) => {
 
   socket.on("runCode", (data) => {
     const { code } = data;
-    console.log(code);
-    // Write the code to a temporary file
-    const fileName = "tempcCode.js"; // Assuming JavaScript code for example
+    const fileName = "tempCode.js"; // Assuming JavaScript code for example
     fs.writeFileSync(fileName, code);
 
-    // Execute the code using Node.js
     exec(`node ${fileName}`, (error, stdout, stderr) => {
       if (error) {
-        console.error(`exec error: ${error}`);
         socket.emit("codeOutput", { output: `Error: ${stderr}` });
         return;
       }
       socket.emit("codeOutput", { output: stdout });
 
-      // Clean up the temporary file
       if (fs.existsSync(fileName)) {
         fs.unlinkSync(fileName);
       } else {
@@ -82,8 +74,6 @@ io.on("connection", (socket) => {
 
   socket.on("message", ({ username, message, roomid, time, socketid }) => {
     const chatMessage = { username, message, time, socketid };
-    console.log(chatMessage);
-    // Store the message in chat history
     if (!roomChatHistory[roomid]) {
       roomChatHistory[roomid] = [];
     }
@@ -92,11 +82,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sync-change", ({ roomid, code }) => {
-    console.log(code, roomid);
     io.to(roomid).emit("sync", code);
   });
 
-  // Whiteboard events
   socket.on("draw", ({ offsetX, offsetY, isDrawing, tool, color, roomid }) => {
     let data = { offsetX, offsetY, isDrawing, tool, color };
     io.to(roomid).emit("draw", data);
@@ -124,8 +112,6 @@ io.on("connection", (socket) => {
 
 app.post("/runCode", (req, res) => {
   const { code } = req.body;
-  console.log(code);
-  // For security reasons, never run untrusted code directly like this in a real application.
   exec(`node -e "${code}"`, (error, stdout, stderr) => {
     if (error) {
       console.log(error);
@@ -136,7 +122,12 @@ app.post("/runCode", (req, res) => {
   });
 });
 
-const port = 5000;
+// All remaining requests return the React app, so it can handle routing.
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+});
+
+const port = process.env.PORT || 5000;
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
