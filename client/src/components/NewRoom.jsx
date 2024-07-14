@@ -4,7 +4,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import backg from "../assets/6193220.jpg";
 const notify = () => toast("Room Id generated");
-import backg from "../assets/6193220.jpg";
 // const copy = () => toast('RoomId copied');
 export default function NewRoom() {
   const [roomid, setroomid] = useState("");

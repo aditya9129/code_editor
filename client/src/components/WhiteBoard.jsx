@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useEffect, useRef, useState } from "react";
 
 // eslint-disable-next-line react/prop-types
 function WhiteBoard({ socketRef, roomid }) {
