@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-javascript';
-import 'ace-builds/src-noconflict/theme-twilight'; // Updated theme
-import WhiteBoard from './WhiteBoard'; // Make sure to import your WhiteBoard component
+import 'ace-builds/src-noconflict/theme-twilight';
+import WhiteBoard from './WhiteBoard';
 import debounce from 'lodash.debounce';
 
 const Editor = ({ editorRef, socketRef, roomid, code }) => {
@@ -13,7 +13,7 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
     if (editorRef.current) {
       const editor = editorRef.current.editor;
       const currentCode = editor.getValue();
-      
+
       if (currentCode !== code) {
         const cursorPosition = editor.getCursorPosition();
         editor.setValue(code, -1); // Set code and maintain the current cursor position
@@ -29,33 +29,31 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
       .map(line => line.replace(/\/\/.*$/, '').trim()) // Remove comments and trim each line
       .join(' ')
       .replace(/"/g, "'"); // Replace double quotes with single quotes
-  
+
     try {
-      const response = await fetch("http://localhost:5000/runCode", {
+      const response = await fetch("/runCode", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ code: codeWithoutComments }),
       });
-      const data = await response.json();
-      if (response.ok) {
-        setOutput(data.output);
-      } else {
-        setOutput(data.output);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
+      setOutput(data.output);
     } catch (error) {
       console.error("Error:", error);
       setOutput(error.toString());
     }
   };
-  
 
   const syncCode = () => {
     const code = editorRef.current.editor.getValue();
-    
-    if (code ) { // Check if the current code is different from the previous code
-      
+    if (code) {
       socketRef.current.emit("sync-change", {
         roomid,
         code,
@@ -63,7 +61,6 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
     }
   };
 
-  // Create a debounced version of syncCode
   const debouncedSyncCode = useRef(debounce(syncCode, 200)).current;
 
   return (
@@ -73,9 +70,9 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
           ref={editorRef}
           className={wb ? "block" : "hidden"}
           mode="javascript"
-          theme="twilight" // Updated theme
+          theme="twilight"
           name="editor"
-          onChange={syncCode}
+          onChange={debouncedSyncCode}
           fontSize={14}
           height="71vh"
           width="100%"
@@ -96,14 +93,14 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
         {wb && (
           <button
             onClick={runCode}
-            className="mt-4 mx-2 px-4  bg-black hover:bg-[#363636] text-white rounded transition duration-300"
+            className="mt-4 mx-2 px-4 mb-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
           >
             Run Code
           </button>
         )}
         <button
-          onClick={() => setWb(!wb)}
-          className="mt-4 px-4 py-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
+          onClick={() => setWb(!wb)}  
+          className="mt-4 px-4 py-2 mb-2 bg-black hover:bg-[#363636] text-white rounded transition duration-300"
         >
           {wb ? "WhiteBoard" : "Editor"}
         </button>
@@ -119,3 +116,4 @@ const Editor = ({ editorRef, socketRef, roomid, code }) => {
 };
 
 export default Editor;
+

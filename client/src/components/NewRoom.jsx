@@ -2,6 +2,7 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import backg from "../assets/6193220.jpg";
 const notify = () => toast("Room Id generated");
 import backg from "../assets/6193220.jpg";
 // const copy = () => toast('RoomId copied');
